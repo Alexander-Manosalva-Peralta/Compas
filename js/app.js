@@ -4,7 +4,7 @@
 ========================================================= */
 const UI = (() => {
 
-  const COLORS = ['#2C5282','#9B2F3E','#227A54','#96691F','#5B4B8A','#B0521E','#1E7A85','#5B6779'];
+  const COLORS = ['#3568D4','#C63B63','#1E9A6C','#B9812A','#6E51C9','#C06B2C','#1C8E97','#68707E'];
   const GRID_START_H = 7;   // 7:00
   const GRID_END_H = 22;    // 22:00
   const ROW_PX = 56;
@@ -74,15 +74,15 @@ const UI = (() => {
       const x = cx + r*Math.cos(angle), y = cy + r*Math.sin(angle);
       const isToday = d === dow;
       const hasPending = pendingByDow[d] > 0;
-      const fill = isToday ? 'url(#dialGrad)' : (hasPending ? '#8E3340' : 'rgba(30,42,63,0.18)');
+      const fill = isToday ? 'url(#dialGrad)' : (hasPending ? '#B23A52' : 'rgba(30,42,63,0.18)');
       const rad = isToday ? 9 : 6;
       html += `<circle cx="${x}" cy="${y}" r="${rad}" fill="${fill}"/>`;
-      html += `<text x="${x}" y="${y - 16}" text-anchor="middle" font-size="11" fill="${isToday?'#22375E':'rgba(22,35,63,0.42)'}" font-family="-apple-system, sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
+      html += `<text x="${x}" y="${y - 16}" text-anchor="middle" font-size="11" fill="${isToday?'#223A66':'rgba(22,35,63,0.42)'}" font-family="-apple-system, sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
     });
 
-    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="28" fill="#161B26" font-family="-apple-system, sans-serif" font-weight="700">${new Date().getDate()}</text>`;
-    html += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="#8A93A3" font-family="Inter, sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
-    html = `<defs><linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22375E"/><stop offset="1" stop-color="#B8863B"/></linearGradient></defs>` + html;
+    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="28" fill="#161A24" font-family="-apple-system, sans-serif" font-weight="700">${new Date().getDate()}</text>`;
+    html += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="#9AA0AC" font-family="Inter, sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
+    html = `<defs><linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#223A66"/><stop offset="1" stop-color="#B8863B"/></linearGradient></defs>` + html;
     svg.innerHTML = html;
   }
 

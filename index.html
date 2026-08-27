@@ -6,7 +6,7 @@
 <title>Compás — tu semestre, ordenado | por Vexum</title>
 <meta name="description" content="Compás: gestor académico para tus cursos, horarios y entregas. Un producto de Vexum." />
 <meta name="author" content="Vexum" />
-<meta name="theme-color" content="#1E3A5F" />
+<meta name="theme-color" content="#17223E" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -27,10 +27,10 @@
     <div class="rail-brand">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 40 40" width="26" height="26">
-          <circle cx="20" cy="20" r="17" fill="none" stroke="#F4F2EC" stroke-width="2"/>
+          <circle cx="20" cy="20" r="17" fill="none" stroke="#F4F4F6" stroke-width="2"/>
           <path d="M20 9 L24 20 L20 31 L16 20 Z" fill="url(#g1)"/>
           <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#C79A4F"/><stop offset="1" stop-color="#F4F2EC"/>
+            <stop offset="0" stop-color="#E4BC7C"/><stop offset="1" stop-color="#F4F4F6"/>
           </linearGradient></defs>
         </svg>
       </span>
@@ -124,7 +124,7 @@
         <div id="courseChipList" class="course-chip-list"></div>
       </div>
     </section>
-    <p class="view-footer" id="dashFooter">Compás <span class="sep">·</span> un producto de <strong>Vexum</strong> <span class="sep">·</span> <button type="button" data-open-legal>Términos y privacidad</button> <span class="sep">·</span> © 2026</p>
+    <p class="view-footer" id="dashFooter">Compás <span class="sep">·</span> un producto de <strong>Vexum</strong> <span class="sep">·</span> <button type="button" class="footer-link" data-open-legal>Términos y privacidad</button> <span class="sep">·</span> © 2026</p>
   </main>
 
   <!-- ===================== HORARIO ===================== -->
@@ -201,23 +201,25 @@
   </div>
   <form id="formCourse">
     <input type="hidden" id="courseId" />
-    <label class="field">
-      <span>Nombre del curso</span>
-      <input type="text" id="courseName" placeholder="Ej. Cálculo II" required />
-    </label>
-    <label class="field">
-      <span>Profesor(a) <em>(opcional)</em></span>
-      <input type="text" id="courseProf" placeholder="Ej. Dr. Ramírez" />
-    </label>
-    <label class="field">
-      <span>Color</span>
-      <div class="color-row" id="colorRow"></div>
-      <input type="hidden" id="courseColor" value="0" />
-    </label>
-    <div class="field">
-      <span>Bloques de horario</span>
-      <div id="scheduleBlocks" class="block-list"></div>
-      <button type="button" class="btn-ghost btn-add-block" id="btnAddBlock">+ Agregar bloque de horario</button>
+    <div class="modal-body">
+      <label class="field">
+        <span>Nombre del curso</span>
+        <input type="text" id="courseName" placeholder="Ej. Cálculo II" required />
+      </label>
+      <label class="field">
+        <span>Profesor(a) <em>(opcional)</em></span>
+        <input type="text" id="courseProf" placeholder="Ej. Dr. Ramírez" />
+      </label>
+      <label class="field">
+        <span>Color</span>
+        <div class="color-row" id="colorRow"></div>
+        <input type="hidden" id="courseColor" value="0" />
+      </label>
+      <div class="field">
+        <span>Bloques de horario</span>
+        <div id="scheduleBlocks" class="block-list"></div>
+        <button type="button" class="btn-ghost btn-add-block" id="btnAddBlock">+ Agregar bloque de horario</button>
+      </div>
     </div>
     <div class="modal-actions">
       <button type="button" class="btn-danger" id="btnDeleteCourse" style="display:none">Eliminar curso</button>
@@ -233,45 +235,47 @@
   </div>
   <form id="formTask">
     <input type="hidden" id="taskId" />
-    <label class="field">
-      <span>Describe el pendiente</span>
-      <input type="text" id="taskQuick" placeholder='Prueba: "Informe de Física el próximo viernes"' />
-      <small class="hint" id="quickHint">Escribe con lenguaje natural y detectaré el curso y la fecha.</small>
-    </label>
-    <label class="field">
-      <span>Título</span>
-      <input type="text" id="taskTitle" placeholder="Ej. Entregar informe de laboratorio" required />
-    </label>
-    <div class="field-row">
+    <div class="modal-body">
       <label class="field">
-        <span>Curso</span>
-        <select id="taskCourse" required></select>
+        <span>Describe el pendiente</span>
+        <input type="text" id="taskQuick" placeholder='Prueba: "Informe de Física el próximo viernes"' />
+        <small class="hint" id="quickHint">Escribe con lenguaje natural y detectaré el curso y la fecha.</small>
       </label>
       <label class="field">
-        <span>Tipo</span>
-        <select id="taskType">
-          <option value="tarea">Tarea</option>
-          <option value="examen">Examen</option>
-          <option value="lectura">Lectura</option>
-          <option value="proyecto">Proyecto</option>
-          <option value="exposicion">Exposición</option>
-        </select>
+        <span>Título</span>
+        <input type="text" id="taskTitle" placeholder="Ej. Entregar informe de laboratorio" required />
+      </label>
+      <div class="field-row">
+        <label class="field">
+          <span>Curso</span>
+          <select id="taskCourse" required></select>
+        </label>
+        <label class="field">
+          <span>Tipo</span>
+          <select id="taskType">
+            <option value="tarea">Tarea</option>
+            <option value="examen">Examen</option>
+            <option value="lectura">Lectura</option>
+            <option value="proyecto">Proyecto</option>
+            <option value="exposicion">Exposición</option>
+          </select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label class="field">
+          <span>Fecha límite</span>
+          <input type="date" id="taskDate" required />
+        </label>
+        <label class="field">
+          <span>Hora <em>(opcional)</em></span>
+          <input type="time" id="taskTime" />
+        </label>
+      </div>
+      <label class="field">
+        <span>Notas <em>(opcional)</em></span>
+        <textarea id="taskNotes" rows="2" placeholder="Detalles, capítulos, enlaces…"></textarea>
       </label>
     </div>
-    <div class="field-row">
-      <label class="field">
-        <span>Fecha límite</span>
-        <input type="date" id="taskDate" required />
-      </label>
-      <label class="field">
-        <span>Hora <em>(opcional)</em></span>
-        <input type="time" id="taskTime" />
-      </label>
-    </div>
-    <label class="field">
-      <span>Notas <em>(opcional)</em></span>
-      <textarea id="taskNotes" rows="2" placeholder="Detalles, capítulos, enlaces…"></textarea>
-    </label>
     <div class="modal-actions">
       <button type="button" class="btn-danger" id="btnDeleteTask" style="display:none">Eliminar</button>
       <button type="submit" class="btn-solid">Guardar pendiente</button>
@@ -284,31 +288,33 @@
     <h3>Ajustes</h3>
     <button class="btn-icon btn-ghost" data-close-modal><svg class="ic" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
   </div>
-  <div class="field">
-    <span>Tu nombre</span>
-    <input type="text" id="settingName" placeholder="¿Cómo te llamamos?" />
-  </div>
-  <div class="field">
-    <span>Avisar con anticipación de</span>
-    <select id="settingLeadDays">
-      <option value="1">1 día antes</option>
-      <option value="2">2 días antes</option>
-      <option value="3">3 días antes</option>
-      <option value="4" selected>4 días antes</option>
-      <option value="7">7 días antes</option>
-    </select>
-  </div>
-  <div class="field">
-    <span>Notificaciones del navegador</span>
-    <button class="btn-glass" id="btnNotifStatus">Comprobar permiso</button>
-  </div>
-  <div class="field settings-legal-row">
-    <span>Legal y créditos</span>
-    <button class="btn-glass" id="btnOpenLegal">Ver términos y privacidad</button>
-  </div>
-  <div class="settings-foot">
-    <button class="btn-ghost" id="btnExportData">Exportar datos (.json)</button>
-    <button class="btn-danger" id="btnResetData">Borrar todos los datos</button>
+  <div class="modal-body">
+    <div class="field">
+      <span>Tu nombre</span>
+      <input type="text" id="settingName" placeholder="¿Cómo te llamamos?" />
+    </div>
+    <div class="field">
+      <span>Avisar con anticipación de</span>
+      <select id="settingLeadDays">
+        <option value="1">1 día antes</option>
+        <option value="2">2 días antes</option>
+        <option value="3">3 días antes</option>
+        <option value="4" selected>4 días antes</option>
+        <option value="7">7 días antes</option>
+      </select>
+    </div>
+    <div class="field">
+      <span>Notificaciones del navegador</span>
+      <button class="btn-glass" id="btnNotifStatus">Comprobar permiso</button>
+    </div>
+    <div class="field settings-legal-row">
+      <span>Legal y créditos</span>
+      <button class="btn-glass" id="btnOpenLegal">Ver términos y privacidad</button>
+    </div>
+    <div class="settings-foot">
+      <button class="btn-ghost" id="btnExportData">Exportar datos (.json)</button>
+      <button class="btn-danger" id="btnResetData">Borrar todos los datos</button>
+    </div>
   </div>
 </div>
 
@@ -317,28 +323,30 @@
     <h3>Legal y créditos</h3>
     <button class="btn-icon btn-ghost" data-close-modal><svg class="ic" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
   </div>
-  <div class="legal-brand">
-    <span class="lb-mark">V</span>
-    <div>
-      <strong>Compás</strong>
-      <span>Un producto de Vexum · Versión 1.0</span>
+  <div class="modal-body">
+    <div class="legal-brand">
+      <span class="lb-mark">V</span>
+      <div>
+        <strong>Compás</strong>
+        <span>Un producto de Vexum · Versión 1.0</span>
+      </div>
     </div>
-  </div>
-  <div class="legal-body">
-    <h4>Acerca de</h4>
-    <p>Compás es un gestor académico desarrollado y operado por <strong>Vexum</strong> para ayudarte a organizar tu horario, tus cursos y tus pendientes universitarios.</p>
+    <div class="legal-body">
+      <h4>Acerca de</h4>
+      <p>Compás es un gestor académico desarrollado y operado por <strong>Vexum</strong> para ayudarte a organizar tu horario, tus cursos y tus pendientes universitarios.</p>
 
-    <h4>Privacidad de tus datos</h4>
-    <p>Compás guarda tus cursos, pendientes y ajustes únicamente en el almacenamiento local de tu navegador (<em>localStorage</em>). Vexum no recolecta, transmite ni almacena esta información en servidores propios ni de terceros. Puedes exportar o borrar tus datos en cualquier momento desde esta misma pantalla de Ajustes.</p>
+      <h4>Privacidad de tus datos</h4>
+      <p>Compás guarda tus cursos, pendientes y ajustes únicamente en el almacenamiento local de tu navegador (<em>localStorage</em>). Vexum no recolecta, transmite ni almacena esta información en servidores propios ni de terceros. Puedes exportar o borrar tus datos en cualquier momento desde esta misma pantalla de Ajustes.</p>
 
-    <h4>Términos de uso</h4>
-    <p>Compás se ofrece "tal cual", como herramienta de apoyo a la organización académica, sin garantía de disponibilidad ni de exactitud de los recordatorios generados. Vexum no se hace responsable por entregas, exámenes o eventos que el usuario no haya registrado o confirmado por su cuenta.</p>
+      <h4>Términos de uso</h4>
+      <p>Compás se ofrece "tal cual", como herramienta de apoyo a la organización académica, sin garantía de disponibilidad ni de exactitud de los recordatorios generados. Vexum no se hace responsable por entregas, exámenes o eventos que el usuario no haya registrado o confirmado por su cuenta.</p>
 
-    <h4>Propiedad intelectual</h4>
-    <p>© 2026 Vexum. Todos los derechos reservados. "Compás" y su diseño son marcas de Vexum. Queda prohibida la reproducción total o parcial del software o su interfaz sin autorización previa por escrito.</p>
+      <h4>Propiedad intelectual</h4>
+      <p>© 2026 Vexum. Todos los derechos reservados. "Compás" y su diseño son marcas de Vexum. Queda prohibida la reproducción total o parcial del software o su interfaz sin autorización previa por escrito.</p>
 
-    <h4>Contacto</h4>
-    <p>¿Preguntas, ideas o soporte? Escríbenos a <strong>contacto@vexum.app</strong>.</p>
+      <h4>Contacto</h4>
+      <p>¿Preguntas, ideas o soporte? Escríbenos a <strong>contacto@vexum.app</strong>.</p>
+    </div>
   </div>
 </div>
 
