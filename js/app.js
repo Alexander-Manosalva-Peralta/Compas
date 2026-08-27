@@ -4,7 +4,7 @@
 ========================================================= */
 const UI = (() => {
 
-  const COLORS = ['#2C5282','#9B2F3E','#227A54','#96691F','#5B4B8A','#B0521E','#1E7A85','#5B6779'];
+  const COLORS = ['#8B7CF6','#38E1D0','#FB7185','#FBBF6A','#34D399','#60A5FA','#F472B6','#A3E635'];
   const GRID_START_H = 7;   // 7:00
   const GRID_END_H = 22;    // 22:00
   const ROW_PX = 56;
@@ -61,7 +61,7 @@ const UI = (() => {
     const dow = todayDow(); // 0..6
     const order = [1,2,3,4,5,6,0]; // lunes..sábado, domingo al final
     const labels = ['L','M','X','J','V','S','D'];
-    let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(30,42,63,0.10)" stroke-width="10"/>`;
+    let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="10"/>`;
 
     const pendingByDow = {};
     Store.tasks.filter(t=>!t.done).forEach(t=>{
@@ -74,15 +74,15 @@ const UI = (() => {
       const x = cx + r*Math.cos(angle), y = cy + r*Math.sin(angle);
       const isToday = d === dow;
       const hasPending = pendingByDow[d] > 0;
-      const fill = isToday ? 'url(#dialGrad)' : (hasPending ? '#8E3340' : 'rgba(30,42,63,0.18)');
+      const fill = isToday ? 'url(#dialGrad)' : (hasPending ? '#FB7185' : 'rgba(255,255,255,0.25)');
       const rad = isToday ? 9 : 6;
       html += `<circle cx="${x}" cy="${y}" r="${rad}" fill="${fill}"/>`;
-      html += `<text x="${x}" y="${y - 16}" text-anchor="middle" font-size="11" fill="${isToday?'#22375E':'rgba(22,35,63,0.42)'}" font-family="-apple-system, sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
+      html += `<text x="${x}" y="${y - 16}" text-anchor="middle" font-size="11" fill="${isToday?'#38E1D0':'rgba(245,243,255,0.55)'}" font-family="Inter, sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
     });
 
-    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="28" fill="#161B26" font-family="-apple-system, sans-serif" font-weight="700">${new Date().getDate()}</text>`;
-    html += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="#8A93A3" font-family="Inter, sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
-    html = `<defs><linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22375E"/><stop offset="1" stop-color="#B8863B"/></linearGradient></defs>` + html;
+    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="30" fill="#F5F3FF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800">${new Date().getDate()}</text>`;
+    html += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="#8E88B8" font-family="Inter, sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
+    html = `<defs><linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#38E1D0"/></linearGradient></defs>` + html;
     svg.innerHTML = html;
   }
 
@@ -488,27 +488,21 @@ const UI = (() => {
   }
 
   /* ---------------- ajustes ---------------- */
-  function updateNotifStatusBtn(){
-    const p = Notifier.permission();
-    const btn = $('#btnNotifStatus');
-    btn.textContent = p === 'granted' ? '✓ Notificaciones activas' : (p === 'denied' ? 'Bloqueadas — actívalas en el navegador' : 'Activar notificaciones');
-  }
-
-  function openSettingsModal(){
-    $('#settingName').value = Store.profile.name || '';
-    $('#settingLeadDays').value = Store.profile.leadDays || 4;
-    updateNotifStatusBtn();
-    openModal('modalSettings');
-  }
-
   function initSettings(){
-    $('#btnSettings').addEventListener('click', openSettingsModal);
-    $('#btnSettingsMobile')?.addEventListener('click', openSettingsModal);
-    $('#btnOpenLegal')?.addEventListener('click', () => openModal('modalLegal'));
-    $all('[data-open-legal]').forEach(b => b.addEventListener('click', () => openModal('modalLegal')));
+    $('#btnSettings').addEventListener('click', () => {
+      $('#settingName').value = Store.profile.name || '';
+      $('#settingLeadDays').value = Store.profile.leadDays || 4;
+      updateNotifStatusBtn();
+      openModal('modalSettings');
+    });
     $('#settingName').addEventListener('change', (e) => { Store.setProfile({ name: e.target.value.trim() }); renderDashboard(); });
     $('#settingLeadDays').addEventListener('change', (e) => { Store.setProfile({ leadDays: parseInt(e.target.value,10) }); refreshCurrentView(); });
 
+    function updateNotifStatusBtn(){
+      const p = Notifier.permission();
+      const btn = $('#btnNotifStatus');
+      btn.textContent = p === 'granted' ? '✓ Notificaciones activas' : (p === 'denied' ? 'Bloqueadas — actívalas en el navegador' : 'Activar notificaciones');
+    }
     $('#btnNotifStatus').addEventListener('click', async () => {
       await Notifier.requestPermission();
       updateNotifStatusBtn();
