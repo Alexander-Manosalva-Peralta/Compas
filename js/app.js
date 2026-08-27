@@ -4,12 +4,13 @@
 ========================================================= */
 const UI = (() => {
 
-  const COLORS = ['#3568D4','#C63B63','#1E9A6C','#B9812A','#6E51C9','#C06B2C','#1C8E97','#68707E'];
+  const COLORS = ['#4A43D6','#FF6A4D','#12A67B','#D99A12','#8B5CF6','#2F86EB','#D6486B','#5B6472'];
   const GRID_START_H = 7;   // 7:00
   const GRID_END_H = 22;    // 22:00
   const ROW_PX = 56;
 
   let blockEditorRows = []; // filas temporales del formulario de curso
+  let scheduleDay = null;   // día seleccionado en la agenda móvil (1..6)
 
   /* ---------------- utilidades ---------------- */
   function $(sel, ctx=document){ return ctx.querySelector(sel); }
@@ -197,6 +198,60 @@ const UI = (() => {
 
   /* ---------------- horario ---------------- */
   function renderSchedule(){
+    renderScheduleAgenda();
+    renderScheduleGrid();
+  }
+
+  // Vista de agenda por día — pensada para móvil: evita la tabla semanal
+  // ancha (que obligaba a hacer zoom) mostrando solo el día seleccionado.
+  function renderScheduleAgenda(){
+    const dow = todayDow();
+    if (scheduleDay === null || scheduleDay < 1 || scheduleDay > 6) {
+      scheduleDay = (dow >= 1 && dow <= 6) ? dow : 1;
+    }
+
+    const blocksByDay = {1:[],2:[],3:[],4:[],5:[],6:[]};
+    Store.courses.forEach(course => {
+      course.blocks.forEach(b => {
+        if (blocksByDay[b.day]) blocksByDay[b.day].push({ course, block: b });
+      });
+    });
+    Object.values(blocksByDay).forEach(list => list.sort((a,b)=>timeToMin(a.block.start)-timeToMin(b.block.start)));
+
+    const tabs = $('#dayTabs');
+    tabs.innerHTML = '';
+    for (let d = 1; d <= 6; d++){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day-tab' + (d === dow ? ' is-today' : '') + (d === scheduleDay ? ' is-active' : '');
+      btn.setAttribute('role','tab');
+      btn.setAttribute('aria-selected', d === scheduleDay);
+      const count = blocksByDay[d].length;
+      btn.innerHTML = `<span class="dt-name">${Store.DAY_SHORT[d]}</span><span class="dt-count">${count || '—'}</span>`;
+      btn.addEventListener('click', () => { scheduleDay = d; renderScheduleAgenda(); });
+      tabs.appendChild(btn);
+    }
+
+    const agenda = $('#scheduleAgenda');
+    agenda.innerHTML = '';
+    const dayBlocks = blocksByDay[scheduleDay];
+    if (!dayBlocks.length) {
+      agenda.innerHTML = `<p class="empty-note">Sin clases el ${Store.DAY_NAMES[scheduleDay].toLowerCase()}. Toca "Nuevo curso" para agregar un bloque.</p>`;
+      return;
+    }
+    dayBlocks.forEach(({course, block}) => {
+      const el = document.createElement('div');
+      el.className = 'agenda-item';
+      el.style.setProperty('--c', COLORS[course.colorIdx]);
+      el.innerHTML = `
+        <div class="agenda-time">${block.start}<span>${block.end}</span></div>
+        <div class="agenda-info"><strong>${Smart.escapeHTML(course.name)}</strong><div>${course.prof ? Smart.escapeHTML(course.prof) : 'Clase programada'}</div></div>`;
+      el.addEventListener('click', () => openCourseModal(course.id));
+      agenda.appendChild(el);
+    });
+  }
+
+  function renderScheduleGrid(){
     const grid = $('#scheduleGrid');
     grid.innerHTML = '';
     const dow = todayDow();
