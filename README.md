@@ -1,5 +1,7 @@
 # Compás 🧭 — tu semestre, ordenado
 
+**Un producto de Vexum.**
+
 Gestor académico para tus cursos universitarios: horario semanal (lunes a sábado),
 pendientes por curso con avisos anticipados, y un asistente local que te resume
 lo importante cada día. Diseño estilo "vidrio esmerilado" (glassmorphism),
@@ -101,6 +103,18 @@ en cualquier momento desde Ajustes → "Exportar datos (.json)".
   para eso necesitarías un pequeño backend que guarde tu API key de forma
   segura (nunca debe ir expuesta en el código del navegador).
 
+## Legal y créditos
+
+- **Desarrollado por:** Vexum.
+- **© 2026 Vexum. Todos los derechos reservados.** "Compás" y su diseño de
+  interfaz son marcas de Vexum. Este software se distribuye tal cual, sin
+  garantía de ningún tipo, como herramienta de apoyo académico.
+- **Privacidad:** todos los datos (cursos, pendientes, ajustes) se guardan
+  únicamente en el `localStorage` del navegador del usuario. Vexum no
+  recolecta ni transmite esta información a ningún servidor. Ver el detalle
+  completo dentro de la app en **Ajustes → Legal y créditos**.
+- **Contacto:** contacto@vexum.app
+
 ---
-Hecho con vidrio, gradientes y un poco de lógica "inteligente" — sin frameworks,
-para que puedas leer y modificar cada línea. 🧭
+Un producto de **Vexum** — hecho con tipografía cuidada y un poco de lógica
+"inteligente", sin frameworks, para que puedas leer y modificar cada línea. 🧭

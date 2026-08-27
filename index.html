@@ -3,15 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Compás — tu semestre, ordenado</title>
-<meta name="description" content="Compás: gestor académico inteligente para tus cursos, horarios y entregas." />
-<meta name="theme-color" content="#120B2E" />
+<title>Compás — tu semestre, ordenado | por Vexum</title>
+<meta name="description" content="Compás: gestor académico para tus cursos, horarios y entregas. Un producto de Vexum." />
+<meta name="author" content="Vexum" />
+<meta name="theme-color" content="#1E3A5F" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -29,14 +27,15 @@
     <div class="rail-brand">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 40 40" width="26" height="26">
-          <circle cx="20" cy="20" r="17" fill="none" stroke="url(#g1)" stroke-width="2.2"/>
+          <circle cx="20" cy="20" r="17" fill="none" stroke="#F4F2EC" stroke-width="2"/>
           <path d="M20 9 L24 20 L20 31 L16 20 Z" fill="url(#g1)"/>
           <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#8B7CF6"/><stop offset="1" stop-color="#38E1D0"/>
+            <stop offset="0" stop-color="#C79A4F"/><stop offset="1" stop-color="#F4F2EC"/>
           </linearGradient></defs>
         </svg>
       </span>
       <span class="brand-name">Compás</span>
+      <span class="brand-by">por Vexum</span>
     </div>
 
     <div class="rail-links" role="tablist">
@@ -61,6 +60,7 @@
     <button class="rail-settings" id="btnSettings" aria-label="Ajustes">
       <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.9a7.9 7.9 0 0 0 0-3.8l2-1.5-2-3.5-2.4.9a8 8 0 0 0-3.3-1.9L13.3 2h-4l-.4 2.1a8 8 0 0 0-3.3 1.9l-2.4-.9-2 3.5 2 1.5a7.9 7.9 0 0 0 0 3.8l-2 1.5 2 3.5 2.4-.9a8 8 0 0 0 3.3 1.9l.4 2.1h4l.4-2.1a8 8 0 0 0 3.3-1.9l2.4.9 2-3.5Z"/></svg>
     </button>
+    <span class="rail-copy">© 2026<br/>Vexum</span>
   </nav>
 
   <!-- ===================== DASHBOARD ===================== -->
@@ -124,6 +124,7 @@
         <div id="courseChipList" class="course-chip-list"></div>
       </div>
     </section>
+    <p class="view-footer" id="dashFooter">Compás <span class="sep">·</span> un producto de <strong>Vexum</strong> <span class="sep">·</span> <button type="button" data-open-legal>Términos y privacidad</button> <span class="sep">·</span> © 2026</p>
   </main>
 
   <!-- ===================== HORARIO ===================== -->
@@ -187,6 +188,7 @@
   <button class="tab-link" data-view="horario"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.3"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg><span>Horario</span></button>
   <button class="tab-link" data-view="cursos"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6.2C4 5 5 4.4 6.4 4.6l6 1v13.7l-6-1C5 18 4 17.4 4 16.2Z"/><path d="M20 6.2C20 5 19 4.4 17.6 4.6l-6 1v13.7l6-1c1.4-.3 2.4-.9 2.4-2.1Z"/></svg><span>Cursos</span></button>
   <button class="tab-link" data-view="tareas"><svg class="ic" viewBox="0 0 24 24"><path d="M9 6.5h9M9 12h9M9 17.5h9"/><path d="m4 6.3 1 1 1.6-1.8M4 11.8l1 1 1.6-1.8M4 17.3l1 1 1.6-1.8"/></svg><span>Pendientes</span></button>
+  <button class="tab-link-settings" id="btnSettingsMobile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 13.9a7.9 7.9 0 0 0 0-3.8l2-1.5-2-3.5-2.4.9a8 8 0 0 0-3.3-1.9L13.3 2h-4l-.4 2.1a8 8 0 0 0-3.3 1.9l-2.4-.9-2 3.5 2 1.5a7.9 7.9 0 0 0 0 3.8l-2 1.5 2 3.5 2.4-.9a8 8 0 0 0 3.3 1.9l.4 2.1h4l.4-2.1a8 8 0 0 0 3.3-1.9l2.4.9 2-3.5Z"/></svg><span>Ajustes</span></button>
 </nav>
 
 <!-- ===================== MODALES ===================== -->
@@ -300,9 +302,43 @@
     <span>Notificaciones del navegador</span>
     <button class="btn-glass" id="btnNotifStatus">Comprobar permiso</button>
   </div>
+  <div class="field settings-legal-row">
+    <span>Legal y créditos</span>
+    <button class="btn-glass" id="btnOpenLegal">Ver términos y privacidad</button>
+  </div>
   <div class="settings-foot">
     <button class="btn-ghost" id="btnExportData">Exportar datos (.json)</button>
     <button class="btn-danger" id="btnResetData">Borrar todos los datos</button>
+  </div>
+</div>
+
+<div class="modal glass" id="modalLegal">
+  <div class="modal-head">
+    <h3>Legal y créditos</h3>
+    <button class="btn-icon btn-ghost" data-close-modal><svg class="ic" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="legal-brand">
+    <span class="lb-mark">V</span>
+    <div>
+      <strong>Compás</strong>
+      <span>Un producto de Vexum · Versión 1.0</span>
+    </div>
+  </div>
+  <div class="legal-body">
+    <h4>Acerca de</h4>
+    <p>Compás es un gestor académico desarrollado y operado por <strong>Vexum</strong> para ayudarte a organizar tu horario, tus cursos y tus pendientes universitarios.</p>
+
+    <h4>Privacidad de tus datos</h4>
+    <p>Compás guarda tus cursos, pendientes y ajustes únicamente en el almacenamiento local de tu navegador (<em>localStorage</em>). Vexum no recolecta, transmite ni almacena esta información en servidores propios ni de terceros. Puedes exportar o borrar tus datos en cualquier momento desde esta misma pantalla de Ajustes.</p>
+
+    <h4>Términos de uso</h4>
+    <p>Compás se ofrece "tal cual", como herramienta de apoyo a la organización académica, sin garantía de disponibilidad ni de exactitud de los recordatorios generados. Vexum no se hace responsable por entregas, exámenes o eventos que el usuario no haya registrado o confirmado por su cuenta.</p>
+
+    <h4>Propiedad intelectual</h4>
+    <p>© 2026 Vexum. Todos los derechos reservados. "Compás" y su diseño son marcas de Vexum. Queda prohibida la reproducción total o parcial del software o su interfaz sin autorización previa por escrito.</p>
+
+    <h4>Contacto</h4>
+    <p>¿Preguntas, ideas o soporte? Escríbenos a <strong>contacto@vexum.app</strong>.</p>
   </div>
 </div>
 
