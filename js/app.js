@@ -546,12 +546,15 @@ const UI = (() => {
   function updateNotifStatusBtn(){
     const p = Notifier.permission();
     const btn = $('#btnNotifStatus');
-    btn.textContent = p === 'granted' ? '✓ Notificaciones activas' : (p === 'denied' ? 'Bloqueadas — actívalas en el navegador' : 'Activar notificaciones');
+    if (!btn) return;
+    btn.textContent = p === 'granted' ? '✓ Notificaciones activas en tu celular' : (p === 'denied' ? 'Bloqueadas — actívalas en ajustes del celular' : 'Activar notificaciones');
   }
 
   function openSettingsModal(){
     $('#settingName').value = Store.profile.name || '';
     $('#settingLeadDays').value = Store.profile.leadDays || 4;
+    const srv = $('#settingPushServer');
+    if (srv) srv.value = Store.profile.pushServerUrl || '';
     updateNotifStatusBtn();
     openModal('modalSettings');
   }
@@ -563,14 +566,29 @@ const UI = (() => {
     $all('[data-open-legal]').forEach(b => b.addEventListener('click', () => openModal('modalLegal')));
     $('#settingName').addEventListener('change', (e) => { Store.setProfile({ name: e.target.value.trim() }); renderDashboard(); });
     $('#settingLeadDays').addEventListener('change', (e) => { Store.setProfile({ leadDays: parseInt(e.target.value,10) }); refreshCurrentView(); });
+    $('#settingPushServer')?.addEventListener('change', (e) => {
+      Store.setProfile({ pushServerUrl: e.target.value.trim().replace(/\/$/, '') });
+      Notifier.syncWithPushServer();
+      pushToast('Servidor Push', 'Servidor actualizado y sincronizado.');
+    });
 
     $('#btnNotifStatus').addEventListener('click', async () => {
       await Notifier.requestPermission();
       updateNotifStatusBtn();
     });
+
+    $('#btnTestNotif')?.addEventListener('click', async () => {
+      const ok = await Notifier.testNotification();
+      updateNotifStatusBtn();
+      if (ok) {
+        pushToast('Notificación enviada', 'Revisa la barra de estado de tu celular.');
+      }
+    });
+
     $('#btnEnableNotifs').addEventListener('click', async () => {
-      await Notifier.requestPermission();
-      pushToast('Notificaciones', Notifier.permission()==='granted' ? 'Listo, te avisaremos a tiempo.' : 'No se activaron los avisos.');
+      const p = await Notifier.requestPermission();
+      pushToast('Notificaciones', p === 'granted' ? 'Listo, te avisaremos a tiempo.' : 'No se activaron los avisos.');
+      updateNotifStatusBtn();
     });
 
     $('#btnExportData').addEventListener('click', () => {
@@ -588,6 +606,25 @@ const UI = (() => {
         switchView('dashboard');
       }
     });
+
+    // Escuchar mensajes desde el Service Worker (por ejemplo, clic en notificación)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'COMPAS_HIGHLIGHT_TASK') {
+          switchView('tareas');
+        }
+      });
+    }
+  }
+
+  /* Manejo de accesos directos de PWA / Android APK (shortcuts) */
+  function handleUrlParams(){
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'new-task') {
+      openTaskModal();
+    } else if (params.get('view')) {
+      switchView(params.get('view'));
+    }
   }
 
   /* ---------------- init ---------------- */
@@ -601,6 +638,7 @@ const UI = (() => {
     populateCourseSelect();
     switchView('dashboard');
     Notifier.start();
+    handleUrlParams();
   }
 
   return { init, pushToast };

@@ -1,6 +1,10 @@
-/* COMPÁS — Service Worker */
+/* =========================================================
+   COMPÁS — Service Worker (PWA / PWABuilder / Web Push)
+   Manejo de caché offline, eventos push remotos y
+   notificaciones nativas para Android / APK.
+   ========================================================= */
 
-const CACHE = 'compas-shell-v2';
+const CACHE = 'compas-shell-v3';
 
 const SHELL = [
   './',
@@ -13,65 +17,147 @@ const SHELL = [
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/icon-maskable-512.png'
+  './icons/icon-maskable-512.png',
+  './screenshots/desktop.png',
+  './screenshots/mobile.png'
 ];
 
-/* Instalar nueva versión */
+/* 1. Instalación: precargar recursos esenciales */
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(SHELL))
+      .then(async (cache) => {
+        for (const url of SHELL) {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn('[SW] No se pudo cachear recurso durante install:', url, err);
+          }
+        }
+      })
       .then(() => self.skipWaiting())
   );
 });
 
-/* Activar nueva versión y eliminar cachés antiguos */
+/* 2. Activación: limpiar cachés antiguas y tomar control inmediato */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then(keys =>
+      .then((keys) =>
         Promise.all(
           keys
-            .filter(key => key !== CACHE)
-            .map(key => caches.delete(key))
+            .filter((key) => key !== CACHE)
+            .map((key) => caches.delete(key))
         )
       )
       .then(() => self.clients.claim())
   );
 });
 
-/* Red primero; caché solo como respaldo offline */
+/* 3. Estrategia de red: Red primero, respaldo en caché para offline */
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
-      .then(response => {
+      .then((response) => {
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
         const copy = response.clone();
-
-        caches.open(CACHE).then(cache => {
+        caches.open(CACHE).then((cache) => {
           cache.put(event.request, copy);
         });
-
         return response;
       })
-      .catch(() => {
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request))
   );
 });
 
-/* Notificaciones */
+/* 4. Evento PUSH (Recepción de notificaciones remotas estilo WhatsApp) */
+self.addEventListener('push', (event) => {
+  let payload = {};
+  if (event.data) {
+    try {
+      payload = event.data.json();
+    } catch (e) {
+      payload = { title: 'Compás 🧭', body: event.data.text() };
+    }
+  }
+
+  const title = payload.title || 'Compás 🧭 — Recordatorio';
+  const options = {
+    body: payload.body || 'Tienes un aviso académico pendiente.',
+    icon: payload.icon || 'icons/icon-192.png',
+    badge: payload.badge || 'icons/icon-192.png',
+    vibrate: payload.vibrate || [200, 100, 200, 100, 200],
+    tag: payload.tag || ('compas-' + Date.now()),
+    renotify: true,
+    requireInteraction: true,
+    data: {
+      url: payload.url || './index.html',
+      taskId: payload.taskId || null,
+      date: Date.now()
+    },
+    actions: [
+      { action: 'view', title: '👀 Ver pendiente' },
+      { action: 'close', title: 'Entendido' }
+    ]
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+/* 5. Clic en la notificación */
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(list => {
-      if (list.length) {
-        return list[0].focus();
-      }
+  if (event.action === 'close') {
+    return;
+  }
 
-      return clients.openWindow('./');
+  const notifData = event.notification.data || {};
+  const targetUrl = notifData.url || './index.html';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // Si la ventana ya existe, enfocarla y avisar qué tarea abrir
+      for (const client of windowClients) {
+        if (client.url && client.url.includes('index.html') && 'focus' in client) {
+          if (notifData.taskId) {
+            client.postMessage({ type: 'COMPAS_HIGHLIGHT_TASK', taskId: notifData.taskId });
+          }
+          return client.focus();
+        }
+      }
+      // Si está cerrada, abrir la app
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
     })
   );
+});
+
+/* 6. Mensajería local (Para pruebas o disparos inmediatos desde la app) */
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+
+  if (event.data.type === 'SHOW_NOTIFICATION') {
+    const { title, options } = event.data;
+    const finalOptions = Object.assign({
+      icon: 'icons/icon-192.png',
+      badge: 'icons/icon-192.png',
+      vibrate: [200, 100, 200, 100, 200],
+      renotify: true,
+      requireInteraction: true,
+      actions: [
+        { action: 'view', title: '👀 Abrir Compás' },
+        { action: 'close', title: 'Descartar' }
+      ]
+    }, options);
+
+    event.waitUntil(self.registration.showNotification(title, finalOptions));
+  } else if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

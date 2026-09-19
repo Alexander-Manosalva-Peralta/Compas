@@ -1,18 +1,69 @@
 {
-  "name": "Compás — gestor académico | Vexum",
+  "id": "compas-gestor-academico",
+  "name": "Compás — Gestor Académico | Vexum",
   "short_name": "Compás",
   "description": "Tu semestre, ordenado: horario, cursos y pendientes con avisos inteligentes. Un producto de Vexum.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
   "orientation": "portrait-primary",
   "background_color": "#F6F5FA",
   "theme_color": "#4A43D6",
   "lang": "es",
+  "dir": "ltr",
   "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Panel principal y horario semanal en escritorio"
+    },
+    {
+      "src": "screenshots/mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista móvil de pendientes y clases del día"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nuevo pendiente",
+      "short_name": "Pendiente",
+      "description": "Registra una nueva entrega o examen",
+      "url": "./index.html?action=new-task",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ver horario",
+      "short_name": "Horario",
+      "description": "Consulta tu horario semanal",
+      "url": "./index.html?view=horario",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

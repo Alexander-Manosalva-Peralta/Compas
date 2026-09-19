@@ -1,0 +1,10 @@
+# Dependencias
+node_modules/
+push-server/node_modules/
+push-server/subscriptions.json
+
+# IDEs y sistemas
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

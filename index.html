@@ -7,6 +7,10 @@
 <meta name="description" content="Compás: gestor académico para tus cursos, horarios y entregas. Un producto de Vexum." />
 <meta name="author" content="Vexum" />
 <meta name="theme-color" content="#4A43D6" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Compás" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon-192.png" />
 <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -308,8 +312,16 @@
       </select>
     </div>
     <div class="field">
-      <span>Notificaciones del navegador</span>
-      <button class="btn-glass" id="btnNotifStatus">Comprobar permiso</button>
+      <span>Notificaciones y avisos en celular</span>
+      <div style="display: flex; gap: 8px; flex-direction: column; width: 100%;">
+        <button type="button" class="btn-glass" id="btnNotifStatus">Comprobar permiso</button>
+        <button type="button" class="btn-solid" id="btnTestNotif" style="display: flex; align-items: center; justify-content: center; gap: 6px;">🔔 Probar notificación en mi celular</button>
+      </div>
+    </div>
+    <div class="field">
+      <span>Servidor Web Push (para avisos con app cerrada)</span>
+      <input type="url" id="settingPushServer" placeholder="http://localhost:3000 o https://tu-push-api.com" />
+      <small style="color: rgba(22, 35, 63, 0.65); font-size: 11.5px; line-height: 1.4; margin-top: 4px; display: block;">Permite enviar avisos a tu celular estilo WhatsApp aunque la app esté completamente cerrada o la pantalla apagada.</small>
     </div>
     <div class="field settings-legal-row">
       <span>Legal y créditos</span>
