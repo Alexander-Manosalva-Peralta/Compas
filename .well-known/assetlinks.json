@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.onrender.compas_utjp.twa",
+        "sha256_cert_fingerprints": ["F2:FF:FE:77:54:9A:42:7D:35:A1:5D:D3:C1:FC:D8:D5:4D:3C:C6:C6:98:AC:C0:B4:7A:98:A9:EA:65:41:43:CB"]
+      }
+    }]
