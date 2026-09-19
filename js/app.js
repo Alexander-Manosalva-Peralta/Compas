@@ -4,7 +4,7 @@
 ========================================================= */
 const UI = (() => {
 
-  const COLORS = ['#3B82F6','#10B981','#6366F1','#F59E0B','#06B6D4','#8B5CF6','#EC4899','#64748B'];
+  const COLORS = ['#0071E3','#34C759','#FF9500','#AF52DE','#00C7BE','#FF2D55','#5856D6','#8E8E93'];
   const GRID_START_H = 7;   // 7:00
   const GRID_END_H = 22;    // 22:00
   const ROW_PX = 56;
@@ -62,7 +62,7 @@ const UI = (() => {
     const dow = todayDow(); // 0..6
     const order = [1,2,3,4,5,6,0]; // lunes..sábado, domingo al final
     const labels = ['L','M','X','J','V','S','D'];
-    let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7"/>`;
+    let html = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="6"/>`;
 
     const pendingByDow = {};
     Store.tasks.filter(t=>!t.done).forEach(t=>{
@@ -75,14 +75,14 @@ const UI = (() => {
       const x = cx + r*Math.cos(angle), y = cy + r*Math.sin(angle);
       const isToday = d === dow;
       const hasPending = pendingByDow[d] > 0;
-      const fill = isToday ? '#3B82F6' : (hasPending ? '#EF4444' : 'rgba(255,255,255,0.22)');
+      const fill = isToday ? '#0071E3' : (hasPending ? '#FF3B30' : 'rgba(0,0,0,0.12)');
       const rad = isToday ? 8 : 5;
       html += `<circle cx="${x}" cy="${y}" r="${rad}" fill="${fill}"/>`;
-      html += `<text x="${x}" y="${y - 15}" text-anchor="middle" font-size="11" fill="${isToday?'#FFFFFF':'rgba(255,255,255,0.5)'}" font-family="-apple-system, sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
+      html += `<text x="${x}" y="${y - 14}" text-anchor="middle" font-size="11" fill="${isToday?'#0071E3':'#86868B'}" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="${isToday?700:500}">${labels[i]}</text>`;
     });
 
-    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="28" fill="#FFFFFF" font-family="-apple-system, sans-serif" font-weight="700">${new Date().getDate()}</text>`;
-    html += `<text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="11" fill="#94A3B8" font-family="Inter, sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
+    html += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="28" fill="#1D1D1F" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif" font-weight="700">${new Date().getDate()}</text>`;
+    html += `<text x="${cx}" y="${cy+17}" text-anchor="middle" font-size="11.5" fill="#86868B" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif">${new Date().toLocaleDateString('es-PE',{month:'long'})}</text>`;
     svg.innerHTML = html;
   }
 

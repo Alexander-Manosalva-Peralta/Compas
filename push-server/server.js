@@ -170,11 +170,56 @@ function checkDeadlinesAndNotify() {
           }
         }
       }
+    // Comprobación al minuto para tareas con hora configurada (ej. 10 minutos antes)
+    if (task.dueDate && task.dueTime) {
+      const taskDateTime = new Date(`${task.dueDate}T${task.dueTime}:00`);
+      const diffMins = Math.round((taskDateTime.getTime() - now.getTime()) / 60000);
+
+      // Alerta 10 minutos antes
+      if (diffMins <= 10 && diffMins > 0 && !task.notifiedThresholds.includes('10m')) {
+        const payload = JSON.stringify({
+          title: '⏰ En 10 minutos: ' + task.title,
+          body: 'Aviso académico: Vence a las ' + task.dueTime,
+          icon: 'icons/icon-192.png',
+          badge: 'icons/icon-192.png',
+          vibrate: [200, 100, 200, 100, 200],
+          tag: 'uniflow-push-10m-' + task.id,
+          url: './index.html',
+          taskId: task.id
+        });
+        try {
+          await webpush.sendNotification(sub, payload);
+          task.notifiedThresholds.push('10m');
+          saveData(db);
+          console.log('[PUSH 10 MIN ENVIADO]', task.title);
+        } catch (err) {}
+      }
+
+      // Alerta al momento exacto de vencimiento
+      if (diffMins <= 0 && diffMins >= -3 && !task.notifiedThresholds.includes('due')) {
+        const payload = JSON.stringify({
+          title: '📌 ¡Vence ahora!: ' + task.title,
+          body: 'El plazo de entrega vence ahora (' + task.dueTime + ')',
+          icon: 'icons/icon-192.png',
+          badge: 'icons/icon-192.png',
+          vibrate: [200, 100, 200, 100, 200],
+          tag: 'uniflow-push-due-' + task.id,
+          url: './index.html',
+          taskId: task.id
+        });
+        try {
+          await webpush.sendNotification(sub, payload);
+          task.notifiedThresholds.push('due');
+          saveData(db);
+          console.log('[PUSH VENCE AHORA ENVIADO]', task.title);
+        } catch (err) {}
+      }
     }
   });
 }
 
-setInterval(checkDeadlinesAndNotify, 10 * 60 * 1000);
+// Ejecutar revisión cada 30 segundos para máxima precisión
+setInterval(checkDeadlinesAndNotify, 30 * 1000);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,12 +1,15 @@
 /* =========================================================
    UNIFLOW — notifications.js
-   Notificaciones móviles nativas (Service Worker + Web Push)
-   Totalmente compatible con Android, PWA y APK (PWABuilder).
+   Motor de notificaciones de alta precisión para Android y PWA.
+   Soporta alertas por días de anticipación, alertas 10 minutos antes,
+   avisos al vencimiento exacto y Web Push en segundo plano.
    ========================================================= */
 const Notifier = (() => {
 
-  // Clave VAPID pública por defecto para Web Push
   const DEFAULT_VAPID_KEY = 'BFFcMvDg-jIN_LqDGhP1tMPJ0Q9u0OHAfoPMO_s5OaSzkj4XUpGFFkElb3nZ4Hj1O86fXL6EEDW01hhmUY02rmo';
+
+  // Almacén de temporizadores exactos en memoria
+  let activeTimeouts = {};
 
   function supported() {
     return ('Notification' in window) || ('serviceWorker' in navigator);
@@ -19,7 +22,7 @@ const Notifier = (() => {
     return 'unsupported';
   }
 
-  /* Sonido suave de aviso mediante Web Audio API */
+  /* Sonido suave estilo Apple (Web Audio API) */
   function playChime() {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -29,23 +32,23 @@ const Notifier = (() => {
       const gain = ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // Nota Re5
-      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // Nota La5
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // A5
 
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      gain.gain.setValueAtTime(0.28, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.38);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
 
       osc.start();
-      osc.stop(ctx.currentTime + 0.35);
+      osc.stop(ctx.currentTime + 0.38);
     } catch (e) {
-      // Ignorar si el navegador bloquea audio antes de interacción
+      // Ignorar si el audio está bloqueado antes de la primera interacción
     }
   }
 
-  /* Solicita permisos y registra el Service Worker */
+  /* Solicitar permisos y registrar SW / Push */
   async function requestPermission() {
     if (!supported()) return 'unsupported';
 
@@ -62,7 +65,6 @@ const Notifier = (() => {
 
       if (res === 'granted') {
         await registerServiceWorker();
-        // Intentar registrar Web Push para avisos en segundo plano
         await subscribePush();
       }
       return res;
@@ -72,11 +74,16 @@ const Notifier = (() => {
     }
   }
 
-  /* Disparo garantizado en Android móvil usando Service Worker */
+  /* Disparo garantizado en Android (Service Worker showNotification obligatorio) */
   async function fire(title, body, tag, extra = {}) {
     if (permission() !== 'granted') return;
 
     playChime();
+
+    // Haptics en móvil si está disponible
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate([180, 80, 180]); } catch(e) {}
+    }
 
     const options = {
       body: body,
@@ -91,12 +98,12 @@ const Notifier = (() => {
         taskId: extra.taskId || null
       },
       actions: [
-        { action: 'view', title: '👀 Ver pendiente' },
-        { action: 'close', title: 'Descartar' }
+        { action: 'view', title: '👀 Ver en UniFlow' },
+        { action: 'close', title: 'Entendido' }
       ]
     };
 
-    // 1. Android móvil / APK: ES OBLIGATORIO usar ServiceWorkerRegistration.showNotification
+    // 1. Prioridad: Service Worker (Obligatorio en Android Chrome / TWA / APK)
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.ready;
@@ -105,46 +112,105 @@ const Notifier = (() => {
           return;
         }
       } catch (err) {
-        console.warn('[UniFlow] Error usando SW showNotification, intentando respaldo:', err);
+        console.warn('[UniFlow] Error en SW showNotification:', err);
       }
     }
 
-    // 2. Respaldo para navegadores de escritorio tradicionales
+    // 2. Respaldo para escritorio
     try {
       if ('Notification' in window) {
         const n = new Notification(title, options);
         n.onclick = () => { window.focus(); n.close(); };
       }
-    } catch (e) {
-      console.warn('[UniFlow] Notification constructor no soportado en esta plataforma.');
-    }
+    } catch (e) {}
   }
 
-  /* Disparar notificación de prueba inmediata para que el usuario valide su celular */
+  /* Notificación de prueba inmediata */
   async function testNotification() {
     const perm = await requestPermission();
     if (perm !== 'granted') {
-      alert('Debes permitir las notificaciones en tu navegador o en los ajustes de la app en tu celular.');
+      alert('Debes permitir las notificaciones en tu celular para recibir avisos.');
       return false;
     }
 
     await fire(
       '🔔 ¡UniFlow funciona correctamente!',
-      'Esta es una notificación real en tu celular. Recibirás avisos de tus cursos y exámenes aquí.',
-      'uniflow-test-notification'
+      'Esta es una notificación real en tu celular. Recibirás avisos de tus tareas y exámenes con sonido y vibración.',
+      'uniflow-test-' + Date.now()
     );
     return true;
   }
 
-  /* Revisa todas las tareas y decide si corresponde avisar según leadDays */
+  /* Programa temporizadores exactos en memoria para tareas próximas en las siguientes 24 horas */
+  function scheduleExactTimers() {
+    // Limpiar temporizadores anteriores
+    Object.values(activeTimeouts).forEach(t => clearTimeout(t));
+    activeTimeouts = {};
+
+    if (!Store || !Store.tasks) return;
+    const now = Date.now();
+
+    Store.tasks.filter(t => !t.done).forEach(task => {
+      const timeStr = task.dueTime ? task.dueTime : '23:59';
+      const taskDate = new Date(`${task.dueDate}T${timeStr}:00`);
+      const targetTime = taskDate.getTime();
+
+      if (isNaN(targetTime)) return;
+
+      // 1. Temporizador a los 10 minutos antes (exactos)
+      const tenMinBefore = targetTime - (10 * 60 * 1000);
+      const msUntilTenMin = tenMinBefore - now;
+
+      if (msUntilTenMin > 0 && msUntilTenMin <= (24 * 60 * 60 * 1000)) {
+        if (!Store.wasNotified(task.id, '10m')) {
+          const timeoutId = setTimeout(() => {
+            const course = Store.getCourse(task.courseId);
+            fire(
+              '⏰ En 10 minutos: ' + task.title,
+              `${course ? course.name + ' · ' : ''}Vence a las ${task.dueTime || 'pronto'}`,
+              'uniflow-10m-' + task.id,
+              { taskId: task.id }
+            );
+            Store.markNotified(task.id, '10m');
+            if (window.UI && UI.pushToast) UI.pushToast(task.title, 'Vence en 10 minutos');
+          }, msUntilTenMin);
+          activeTimeouts[task.id + '_10m'] = timeoutId;
+        }
+      }
+
+      // 2. Temporizador al momento exacto de vencimiento
+      const msUntilDue = targetTime - now;
+      if (msUntilDue > 0 && msUntilDue <= (24 * 60 * 60 * 1000)) {
+        if (!Store.wasNotified(task.id, 'due')) {
+          const timeoutId = setTimeout(() => {
+            const course = Store.getCourse(task.courseId);
+            fire(
+              '📌 ¡Vence ahora!: ' + task.title,
+              `${course ? course.name + ' · ' : ''}Es hora de entregar tu pendiente (${task.dueTime || 'hoy'})`,
+              'uniflow-due-' + task.id,
+              { taskId: task.id }
+            );
+            Store.markNotified(task.id, 'due');
+            if (window.UI && UI.pushToast) UI.pushToast(task.title, 'Vence ahora');
+          }, msUntilDue);
+          activeTimeouts[task.id + '_due'] = timeoutId;
+        }
+      }
+    });
+  }
+
+  /* Revisa tareas por fecha (días de anticipación) y por minutos exactos */
   function checkTasks() {
     if (!Store || !Store.tasks) return;
+    const now = new Date();
     const lead = parseInt(Store.profile.leadDays, 10) || 4;
     const thresholds = Array.from(new Set([lead, 1, 0])).sort((a,b)=>b-a);
 
     Store.tasks.filter(t => !t.done).forEach(task => {
+      // 1. Revisión de días de anticipación
       const days = Smart.daysUntil(task.dueDate);
       thresholds.forEach(th => {
+        // Solo alertar el umbral de "hoy" si no tiene hora específica o si ya es temprano
         if (days === th && !Store.wasNotified(task.id, th)) {
           const course = Store.getCourse(task.courseId);
           const when = th === 0 ? 'vence hoy' : (th === 1 ? 'vence mañana' : `vence en ${th} días`);
@@ -160,13 +226,49 @@ const Notifier = (() => {
           }
         }
       });
+
+      // 2. Revisión al minuto (para tareas de hoy con hora configurada)
+      if (task.dueDate && task.dueTime) {
+        const taskDateTime = new Date(`${task.dueDate}T${task.dueTime}:00`);
+        const diffMs = taskDateTime.getTime() - now.getTime();
+        const diffMins = Math.round(diffMs / 60000);
+
+        // Alerta de 10 minutos antes (ventana de 1 a 10 minutos)
+        if (diffMins <= 10 && diffMins > 0 && !Store.wasNotified(task.id, '10m')) {
+          const course = Store.getCourse(task.courseId);
+          fire(
+            '⏰ En 10 minutos: ' + task.title,
+            `${course ? course.name + ' · ' : ''}Vence a las ${task.dueTime}`,
+            'uniflow-10m-' + task.id,
+            { taskId: task.id }
+          );
+          Store.markNotified(task.id, '10m');
+          if (window.UI && UI.pushToast) UI.pushToast(task.title, 'Vence en 10 minutos');
+        }
+
+        // Alerta al momento exacto de entrega (ventana entre -3 y 0 minutos)
+        if (diffMins <= 0 && diffMins >= -3 && !Store.wasNotified(task.id, 'due')) {
+          const course = Store.getCourse(task.courseId);
+          fire(
+            '📌 ¡Vence ahora!: ' + task.title,
+            `${course ? course.name + ' · ' : ''}El plazo de entrega vence ahora (${task.dueTime})`,
+            'uniflow-due-' + task.id,
+            { taskId: task.id }
+          );
+          Store.markNotified(task.id, 'due');
+          if (window.UI && UI.pushToast) UI.pushToast(task.title, 'Vence ahora');
+        }
+      }
     });
 
-    // Si hay un servidor Push configurado, sincronizar tareas para avisos con app cerrada
+    // Programar temporizadores de precisión milimétrica
+    scheduleExactTimers();
+
+    // Sincronizar con servidor Push si está activo
     syncWithPushServer();
   }
 
-  /* Conversión de clave VAPID base64 a Uint8Array */
+  /* Conversión VAPID base64 a Uint8Array */
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -178,7 +280,7 @@ const Notifier = (() => {
     return outputArray;
   }
 
-  /* Suscripción a Web Push (FCM / Google Services para Android) */
+  /* Suscripción a Web Push */
   async function subscribePush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null;
 
@@ -194,19 +296,18 @@ const Notifier = (() => {
         });
       }
 
-      // Guardar suscripción en Store
       if (sub && Store.setProfile) {
         Store.setProfile({ pushSubscription: sub.toJSON() });
       }
 
       return sub;
     } catch (err) {
-      console.info('[UniFlow] PushManager suscripción opcional:', err.message);
+      console.info('[UniFlow] PushManager suscripción:', err.message);
       return null;
     }
   }
 
-  /* Sincronización automática de pendientes con el servidor Push si está activo */
+  /* Sincronización con Servidor Push (enviando dueDate y dueTime) */
   async function syncWithPushServer() {
     const serverUrl = Store.profile && Store.profile.pushServerUrl;
     const sub = Store.profile && Store.profile.pushSubscription;
@@ -219,13 +320,17 @@ const Notifier = (() => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subscription: sub,
-          tasks: Store.tasks.filter(t => !t.done),
+          tasks: Store.tasks.filter(t => !t.done).map(t => ({
+            id: t.id,
+            title: t.title,
+            dueDate: t.dueDate,
+            dueTime: t.dueTime || '23:59',
+            courseId: t.courseId
+          })),
           leadDays: Store.profile.leadDays || 4
         })
       });
-    } catch (e) {
-      // Servidor local o remoto no alcanzable en este momento
-    }
+    } catch (e) {}
   }
 
   /* Registro del Service Worker */
@@ -233,10 +338,10 @@ const Notifier = (() => {
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.register('service-worker.js', { scope: './' });
-        console.log('[UniFlow] Service Worker registrado con éxito:', reg.scope);
+        console.log('[UniFlow] Service Worker registrado:', reg.scope);
         return reg;
       } catch (err) {
-        console.warn('[UniFlow] Error registrando Service Worker:', err);
+        console.warn('[UniFlow] Error registrando SW:', err);
       }
     }
     return null;
@@ -251,10 +356,10 @@ const Notifier = (() => {
 
     checkTasks();
 
-    // Revisa periódicamente mientras la app esté abierta
-    setInterval(checkTasks, 15 * 60 * 1000);
+    // Revisión frecuente: cada 15 segundos mientras la app está activa
+    setInterval(checkTasks, 15 * 1000);
 
-    // Revisa de inmediato cuando el usuario vuelve a ver la app o desbloquea la pantalla
+    // Revisión inmediata al desbloquear pantalla o volver a la app
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         checkTasks();
@@ -274,4 +379,3 @@ const Notifier = (() => {
     start
   };
 })();
-

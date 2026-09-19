@@ -4,7 +4,7 @@
    notificaciones nativas para Android / APK.
    ========================================================= */
 
-const CACHE = 'uniflow-shell-v3';
+const CACHE = 'uniflow-shell-v4';
 
 const SHELL = [
   './',
