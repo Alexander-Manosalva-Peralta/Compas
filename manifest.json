@@ -1,7 +1,7 @@
 {
-  "id": "compas-gestor-academico",
-  "name": "Compás — Gestor Académico | Vexum",
-  "short_name": "Compás",
+  "id": "uniflow-gestor-academico",
+  "name": "UniFlow — Gestor Académico | Vexum",
+  "short_name": "UniFlow",
   "description": "Tu semestre, ordenado: horario, cursos y pendientes con avisos inteligentes. Un producto de Vexum.",
   "start_url": "./index.html",
   "scope": "./",

@@ -1,5 +1,5 @@
 /* =========================================================
-   COMPÁS — notifications.js
+   UNIFLOW — notifications.js
    Notificaciones móviles nativas (Service Worker + Web Push)
    Totalmente compatible con Android, PWA y APK (PWABuilder).
    ========================================================= */
@@ -67,7 +67,7 @@ const Notifier = (() => {
       }
       return res;
     } catch (e) {
-      console.warn('[Compás] Error solicitando permiso:', e);
+      console.warn('[UniFlow] Error solicitando permiso:', e);
       return 'denied';
     }
   }
@@ -80,7 +80,7 @@ const Notifier = (() => {
 
     const options = {
       body: body,
-      tag: tag || ('compas-' + Date.now()),
+      tag: tag || ('uniflow-' + Date.now()),
       icon: 'icons/icon-192.png',
       badge: 'icons/icon-192.png',
       vibrate: [200, 100, 200, 100, 200],
@@ -105,7 +105,7 @@ const Notifier = (() => {
           return;
         }
       } catch (err) {
-        console.warn('[Compás] Error usando SW showNotification, intentando respaldo:', err);
+        console.warn('[UniFlow] Error usando SW showNotification, intentando respaldo:', err);
       }
     }
 
@@ -116,7 +116,7 @@ const Notifier = (() => {
         n.onclick = () => { window.focus(); n.close(); };
       }
     } catch (e) {
-      console.warn('[Compás] Notification constructor no soportado en esta plataforma.');
+      console.warn('[UniFlow] Notification constructor no soportado en esta plataforma.');
     }
   }
 
@@ -129,9 +129,9 @@ const Notifier = (() => {
     }
 
     await fire(
-      '🔔 ¡Compás funciona correctamente!',
+      '🔔 ¡UniFlow funciona correctamente!',
       'Esta es una notificación real en tu celular. Recibirás avisos de tus cursos y exámenes aquí.',
-      'compas-test-notification'
+      'uniflow-test-notification'
     );
     return true;
   }
@@ -151,7 +151,7 @@ const Notifier = (() => {
           fire(
             '📌 ' + task.title,
             `${course ? course.name + ' · ' : ''}${when.charAt(0).toUpperCase()+when.slice(1)}${task.dueTime ? ' a las ' + task.dueTime : ''}`,
-            'compas-task-' + task.id + '-' + th,
+            'uniflow-task-' + task.id + '-' + th,
             { taskId: task.id }
           );
           Store.markNotified(task.id, th);
@@ -201,7 +201,7 @@ const Notifier = (() => {
 
       return sub;
     } catch (err) {
-      console.info('[Compás] PushManager suscripción opcional:', err.message);
+      console.info('[UniFlow] PushManager suscripción opcional:', err.message);
       return null;
     }
   }
@@ -233,10 +233,10 @@ const Notifier = (() => {
     if ('serviceWorker' in navigator) {
       try {
         const reg = await navigator.serviceWorker.register('service-worker.js', { scope: './' });
-        console.log('[Compás] Service Worker registrado con éxito:', reg.scope);
+        console.log('[UniFlow] Service Worker registrado con éxito:', reg.scope);
         return reg;
       } catch (err) {
-        console.warn('[Compás] Error registrando Service Worker:', err);
+        console.warn('[UniFlow] Error registrando Service Worker:', err);
       }
     }
     return null;

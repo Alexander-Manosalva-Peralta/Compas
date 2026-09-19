@@ -1,4 +1,4 @@
-# Compás 🧭 — tu semestre, ordenado
+# UniFlow 🧭 — tu semestre, ordenado
 
 **Un producto de Vexum.**
 
@@ -9,7 +9,7 @@ funciona en laptop y celular, y se puede **instalar como app** (PWA).
 
 ## Abrir el proyecto en PyCharm
 
-1. Abre PyCharm → **File → Open…** → selecciona esta carpeta (`compas`).
+1. Abre PyCharm → **File → Open…** → selecciona esta carpeta (`uniflow`).
 2. Es un proyecto 100% HTML/CSS/JS (sin build ni dependencias de Python), así
    que no necesitas crear un intérprete de Python para verlo funcionar.
 3. Para probarlo con recarga en vivo, instala el plugin **PyCharm: "Live templates"
@@ -33,7 +33,7 @@ funciona en laptop y celular, y se puede **instalar como app** (PWA).
 ## Instalarlo como app (laptop y celular)
 
 - **Laptop (Chrome/Edge):** abre el sitio → ícono de instalar en la barra de
-  direcciones (o menú ⋮ → "Instalar Compás"). Queda como app de escritorio.
+  direcciones (o menú ⋮ → "Instalar UniFlow"). Queda como app de escritorio.
 - **Celular Android (Chrome):** menú ⋮ → "Añadir a pantalla de inicio" / "Instalar app".
 - **iPhone (Safari):** botón compartir → "Añadir a pantalla de inicio".
 
@@ -51,7 +51,7 @@ minutos, arrastrando esta misma carpeta.
    - *"Informe de laboratorio en 3 días"*
    - *"Exposición de Física el 17 de octubre"*
 
-   Compás intenta detectar automáticamente el **curso** y la **fecha límite**;
+   UniFlow intenta detectar automáticamente el **curso** y la **fecha límite**;
    siempre puedes corregirlos manualmente antes de guardar.
 3. **Resumen (dashboard)** te muestra: clases del día, lo más urgente por
    vencer, y un panel de "Asistente" con frases generadas según tu carga real
@@ -62,7 +62,7 @@ minutos, arrastrando esta misma carpeta.
 
 ## Notificaciones
 
-Compás usa la **Web Notifications API**: revisa tus pendientes al abrir la
+UniFlow usa la **Web Notifications API**: revisa tus pendientes al abrir la
 app, cada 30 minutos mientras sigue abierta, y cada vez que vuelves a la
 pestaña. Te avisa en 3 momentos por tarea: al llegar tu umbral configurado
 (por defecto 4 días antes), 1 día antes, y el mismo día.
@@ -77,7 +77,7 @@ pestaña. Te avisa en 3 momentos por tarea: al llegar tu umbral configurado
 ## Estructura del proyecto
 
 ```
-compas/
+uniflow/
 ├── index.html            → estructura de las 4 vistas + modales
 ├── css/styles.css         → sistema de diseño (glassmorphism, tokens, responsive)
 ├── js/store.js            → capa de datos (localStorage)
@@ -106,7 +106,7 @@ en cualquier momento desde Ajustes → "Exportar datos (.json)".
 ## Legal y créditos
 
 - **Desarrollado por:** Vexum.
-- **© 2026 Vexum. Todos los derechos reservados.** "Compás" y su diseño de
+- **© 2026 Vexum. Todos los derechos reservados.** "UniFlow" y su diseño de
   interfaz son marcas de Vexum. Este software se distribuye tal cual, sin
   garantía de ningún tipo, como herramienta de apoyo académico.
 - **Privacidad:** todos los datos (cursos, pendientes, ajustes) se guardan

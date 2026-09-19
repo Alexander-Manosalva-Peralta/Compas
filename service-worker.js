@@ -1,10 +1,10 @@
 /* =========================================================
-   COMPÁS — Service Worker (PWA / PWABuilder / Web Push)
+   UNIFLOW — Service Worker (PWA / PWABuilder / Web Push)
    Manejo de caché offline, eventos push remotos y
    notificaciones nativas para Android / APK.
    ========================================================= */
 
-const CACHE = 'compas-shell-v3';
+const CACHE = 'uniflow-shell-v3';
 
 const SHELL = [
   './',
@@ -81,17 +81,17 @@ self.addEventListener('push', (event) => {
     try {
       payload = event.data.json();
     } catch (e) {
-      payload = { title: 'Compás 🧭', body: event.data.text() };
+      payload = { title: 'UniFlow 🧭', body: event.data.text() };
     }
   }
 
-  const title = payload.title || 'Compás 🧭 — Recordatorio';
+  const title = payload.title || 'UniFlow 🧭 — Recordatorio';
   const options = {
     body: payload.body || 'Tienes un aviso académico pendiente.',
     icon: payload.icon || 'icons/icon-192.png',
     badge: payload.badge || 'icons/icon-192.png',
     vibrate: payload.vibrate || [200, 100, 200, 100, 200],
-    tag: payload.tag || ('compas-' + Date.now()),
+    tag: payload.tag || ('uniflow-' + Date.now()),
     renotify: true,
     requireInteraction: true,
     data: {
@@ -151,7 +151,7 @@ self.addEventListener('message', (event) => {
       renotify: true,
       requireInteraction: true,
       actions: [
-        { action: 'view', title: '👀 Abrir Compás' },
+        { action: 'view', title: '👀 Abrir UniFlow' },
         { action: 'close', title: 'Descartar' }
       ]
     }, options);

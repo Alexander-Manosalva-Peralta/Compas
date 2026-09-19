@@ -1,5 +1,5 @@
 /* =========================================================
-   COMPÁS — store.js
+   UNIFLOW — store.js
    Capa de datos: persistencia en localStorage.
    Modelo:
    course = { id, name, prof, colorIdx, blocks:[{day, start, end, room}] }
@@ -8,7 +8,7 @@
    task = { id, courseId, title, type, dueDate, dueTime, notes, done, createdAt }
 ========================================================= */
 const Store = (() => {
-  const KEY = 'compas.v1';
+  const KEY = 'uniflow.v1';
 
   const DAY_NAMES = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   const DAY_SHORT = ['', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -33,7 +33,7 @@ const Store = (() => {
       const data = JSON.parse(raw);
       return Object.assign(seed(), data);
     } catch (e) {
-      console.warn('Compás: no se pudo leer el almacenamiento, empezando de cero.', e);
+      console.warn('UniFlow: no se pudo leer el almacenamiento, empezando de cero.', e);
       return seed();
     }
   }

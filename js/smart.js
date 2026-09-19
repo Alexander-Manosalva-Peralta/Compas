@@ -1,5 +1,5 @@
 /* =========================================================
-   COMPÁS — smart.js
+   UNIFLOW — smart.js
    El "cerebro" del asistente: sin backend ni API keys.
    - Parsea fechas en lenguaje natural (español) para el campo rápido.
    - Calcula un puntaje de urgencia por tarea.

@@ -1,7 +1,7 @@
 {
-  "name": "compas-push-server",
+  "name": "uniflow-push-server",
   "version": "1.0.0",
-  "description": "Servidor API de notificaciones Web Push para Compás PWA / APK",
+  "description": "Servidor API de notificaciones Web Push para UniFlow PWA / APK",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

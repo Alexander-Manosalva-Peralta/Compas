@@ -1,6 +1,6 @@
-# 📱 Guía para Generar el APK de Compás con PWABuilder (Sin Play Store)
+# 📱 Guía para Generar el APK de UniFlow con PWABuilder (Sin Play Store)
 
-Esta guía te explica detalladamente cómo convertir tu proyecto **Compás** en un archivo **APK** instalable directamente en tu celular Android usando **PWABuilder**, y cómo asegurarte de que las **notificaciones con sonido y vibración lleguen como WhatsApp**.
+Esta guía te explica detalladamente cómo convertir tu proyecto **UniFlow** en un archivo **APK** instalable directamente en tu celular Android usando **PWABuilder**, y cómo asegurarte de que las **notificaciones con sonido y vibración lleguen como WhatsApp**.
 
 ---
 
@@ -30,8 +30,8 @@ PWABuilder necesita una dirección web pública con HTTPS para empaquetar tu có
 4. Haz clic en el botón superior derecho: **Package for Stores**.
 5. En la sección **Android**, haz clic en el botón **Package**:
    - En el modal de opciones de Android:
-     - **Package ID**: Puedes dejar el que sugiere o poner algo como `com.vexum.compas`.
-     - **App Name**: `Compás`.
+     - **Package ID**: Puedes dejar el que sugiere o poner algo como `com.vexum.uniflow`.
+     - **App Name**: `UniFlow`.
      - **Signing Key**: Si es para uso personal sin Play Store, selecciona **"None"** o **"Auto-generate"** (PWABuilder generará las claves por ti).
 6. Haz clic en **Generate** o **Download Package**.
 7. Se descargará un archivo `.zip`. Descomprímelo y dentro encontrarás tu archivo instalable:
@@ -49,7 +49,7 @@ PWABuilder necesita una dirección web pública con HTTPS para empaquetar tu có
    - Toca en **Ajustes / Configuración**.
    - Marca la casilla **"Permitir desde esta fuente"**.
    - Vuelve atrás y pulsa **Instalar**.
-4. ¡Listo! Verás el ícono de **Compás** en el menú de aplicaciones de tu celular como cualquier otra app nativa.
+4. ¡Listo! Verás el ícono de **UniFlow** en el menú de aplicaciones de tu celular como cualquier otra app nativa.
 
 ---
 
@@ -58,17 +58,17 @@ PWABuilder necesita una dirección web pública con HTTPS para empaquetar tu có
 Android tiene sistemas estrictos de ahorro de batería que pueden suspender las apps que no son de mensajería comercial. Para garantizar que los avisos suenen siempre a tiempo:
 
 ### A. Otorgar permisos dentro de la app
-1. Abre **Compás** en tu celular.
+1. Abre **UniFlow** en tu celular.
 2. Toca en el ícono de engranaje (⚙️ **Ajustes**).
 3. En la sección **Notificaciones y avisos en celular**, pulsa **"Activar notificaciones"** y selecciona **Permitir** en el diálogo del sistema.
 4. Pulsa el botón **"🔔 Probar notificación en mi celular"**.
-   - En ese mismo instante verás la notificación deslizarse en la barra superior con el ícono de Compás, sonido y vibración.
+   - En ese mismo instante verás la notificación deslizarse en la barra superior con el ícono de UniFlow, sonido y vibración.
 
-### B. Desactivar el ahorro de batería de Android para Compás
-1. En tu celular, entra a **Ajustes del Sistema → Aplicaciones → Compás**.
+### B. Desactivar el ahorro de batería de Android para UniFlow
+1. En tu celular, entra a **Ajustes del Sistema → Aplicaciones → UniFlow**.
 2. Entra a **Batería** (o *Uso de batería*).
 3. Cambia la opción de *"Optimizado"* a **"Sin restricciones"** (o *"Permitir actividad en segundo plano"*).
-   *Esto evita que Android congele Compás cuando apagas la pantalla.*
+   *Esto evita que Android congele UniFlow cuando apagas la pantalla.*
 4. En **Notificaciones**, asegúrate de que esté marcado **"Permitir sonido y vibración"**.
 
 ---
@@ -79,5 +79,5 @@ Android tiene sistemas estrictos de ahorro de batería que pueden suspender las 
 - **Modo Servidor Push (24/7 con app cerrada)**:
   - En la carpeta `push-server` incluimos el microservicio de notificaciones.
   - Puedes desplegarlo gratis en **Render.com** (ver instrucciones en `push-server/README.md`).
-  - Luego en la app, vas a **Ajustes → Servidor Web Push** y colocas tu URL (ej. `https://compas-push.onrender.com`).
+  - Luego en la app, vas a **Ajustes → Servidor Web Push** y colocas tu URL (ej. `https://uniflow-push.onrender.com`).
   - Con esto, los avisos llegarán vía Google FCM aunque el celular lleve horas apagado.

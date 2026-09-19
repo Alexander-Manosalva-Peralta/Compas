@@ -1,5 +1,5 @@
 /* =========================================================
-   COMPÁS — app.js
+   UNIFLOW — app.js
    Controlador principal: vistas, render y eventos de UI.
 ========================================================= */
 const UI = (() => {
@@ -594,7 +594,7 @@ const UI = (() => {
       const blob = new Blob([Store.exportJSON()], { type:'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'compas-datos.json';
+      a.download = 'uniflow-datos.json';
       a.click();
     });
     $('#btnResetData').addEventListener('click', () => {

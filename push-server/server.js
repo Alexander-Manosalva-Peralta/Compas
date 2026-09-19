@@ -1,5 +1,5 @@
 /* =========================================================
-   COMPÁS — Push Notification Server
+   UNIFLOW — Push Notification Server
    Microservicio para programar y enviar notificaciones Web Push
    al celular (Android / APK / PWA) estilo WhatsApp con la app cerrada.
    ========================================================= */
@@ -48,7 +48,7 @@ let db = loadData();
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'online',
-    appName: 'Compás Push API',
+    appName: 'UniFlow Push API',
     vapidPublicKey: VAPID_PUBLIC_KEY,
     totalSubscriptions: db.subscriptions.length,
     totalActiveTasks: db.tasks.length
@@ -111,7 +111,7 @@ app.post('/api/send-test', async (req, res) => {
   }
 
   const payload = JSON.stringify({
-    title: '🔔 Compás — Notificación Push Real',
+    title: '🔔 UniFlow — Notificación Push Real',
     body: '¡Esta notificación llegó directamente desde el servidor Push a tu celular!',
     icon: 'icons/icon-192.png',
     badge: 'icons/icon-192.png',
@@ -153,7 +153,7 @@ function checkDeadlinesAndNotify() {
           icon: 'icons/icon-192.png',
           badge: 'icons/icon-192.png',
           vibrate: [200, 100, 200, 100, 200],
-          tag: 'compas-push-' + task.id + '-' + th,
+          tag: 'uniflow-push-' + task.id + '-' + th,
           url: './index.html',
           taskId: task.id
         });
@@ -179,7 +179,7 @@ setInterval(checkDeadlinesAndNotify, 10 * 60 * 1000);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('====================================================');
-  console.log('🚀 Compás Push Server escuchando en puerto:', PORT);
+  console.log('🚀 UniFlow Push Server escuchando en puerto:', PORT);
   console.log('📡 Clave VAPID Pública:', VAPID_PUBLIC_KEY);
   console.log('====================================================');
 });
